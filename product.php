@@ -77,8 +77,8 @@
                 <div class="mb-3">
                     <label for="status" class="form-label">Product Status</label>
                     <select name="status" id="status" class=" form-select">
-                        <option value="active">Active</option>
-                        <option value="inactive">Inactive</option>
+                        <option value="1">Active</option>
+                        <option value="0">Inactive</option>
                     </select>
                 </div>
                 <!-- <div>
@@ -102,50 +102,28 @@
 
 <script>
 
-    // const saveProduct = () => {
-    //         let data = new FormData($('#formCreate')[0]);
-    //         let product = {
-    //             'name' : data.get('name'),
-    //             'price' : data.get('price'),
-    //             'qty'   : data.get('qty'),
-    //             'status' : data.get('status')
-    //         }
-
-        
-    //         $.ajax({
-    //             type: "POST",
-    //             url: "ProductController.php?type=store",
-    //             data: product,
-    //             dataType: "json",
-    //             success: function (response) {
-                    
-    //             },
-    //             error: function(xhr, status, error) {
-    //                 console.error(xhr.responseText);
-    //             }
-    //         });
-    // }
-
+    
     
     const saveProduct = () => {
-    let form = $('#formCreate')[0];
-    let data = new FormData(form);
+        let form = $('#formCreate')[0];
+        let data = new FormData(form);
+
+        let product = {
+            name  : data.get('name'),
+            price : data.get('price'),
+            qty   : data.get('qty'),
+            status : data.get('status')
+        }
 
     $.ajax({
         type: "POST",
-        url: "ProductController.php",
-        data: data,
-        processData: false,
-        contentType: false,
+        url: "ProductController.php?type=store",
+        data: product,
         dataType: "json",
         success: function(response) {
-            console.log("Success:", response);
-            if (response.status) {
-                alert(response.message);
+            if(response.status == true){
                 $('#modalCreate').modal('hide');
-                // Optionally refresh table data here
-            } else {
-                alert("Error: " + response.message);
+                $('#formCreate').trigger('reset');
             }
         },
         error: function(xhr, status, error) {
