@@ -23,6 +23,20 @@ if (!$con) {
 $type = $_GET['type'] ?? '';
 
 switch($type){
+    case 'list' : {
+        $sql = "SELECT * FROM `products` ";
+        $run = mysqli_query($con,$sql);
+
+        //convert data to accociative array
+        $products = mysqli_fetch_all($run,MYSQLI_ASSOC);
+
+        echo json_encode([
+            'status' => true,
+            'products' => $products
+        ]);
+
+        break;
+    }
     case 'store'  : {
 
         $name = $_POST['name'] ?? '';

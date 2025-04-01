@@ -32,20 +32,7 @@
                 </tr>
             </thead>
             <tbody id="product-table">
-                <tr>
-                    <td>1</td>
-                    <td>1001</td>
-                    <td>I Phone 13 pro</td>
-                    <td>$500</td>
-                    <td>5</td> 
-                    <td>
-                        <span class=" badge bg-success">Active</span>
-                    </td>
-                    <td>
-                        <button class="btn btn-primary btn-edit btn-sm">Edit</button>
-                        <button class="btn btn-danger btn-delete btn-sm">Delete</button>
-                    </td>
-                </tr>
+                
 
             </tbody>
         </table>
@@ -102,7 +89,41 @@
 
 <script>
 
-    
+    const getAllProduct = () => {
+        $.ajax({
+            type : 'GET',
+            url  : 'ProductController.php?type=list',
+            dataType: "json",
+            success : (response) => {
+                if(response.status == true){
+                    let tr = ``;
+                    $.each(response.products,(index,value) => {
+                        tr += `
+                           <tr>
+                                <td>${index + 1}</td>
+                                <td>${value.id}</td>
+                                <td>${value.name}</td>
+                                <td>$${value.price}</td>
+                                <td>${value.qty}</td> 
+                                <td>
+                                    <span class=" badge bg-success">Active</span>
+                                </td>
+                                <td>
+                                    <button class="btn btn-primary btn-edit btn-sm">Edit</button>
+                                    <button class="btn btn-danger btn-delete btn-sm">Delete</button>
+                                </td>
+                            </tr>
+                        `;
+                    })
+
+                    $("#product-table").html(tr);
+                }
+            }
+
+        });
+    }
+
+    getAllProduct();
     
     const saveProduct = () => {
         let form = $('#formCreate')[0];
@@ -115,24 +136,24 @@
             status : data.get('status')
         }
 
-    $.ajax({
-        type: "POST",
-        url: "ProductController.php?type=store",
-        data: product,
-        dataType: "json",
-        success: function(response) {
-            if(response.status == true){
-                $('#modalCreate').modal('hide');
-                $('#formCreate').trigger('reset');
+        $.ajax({
+            type: "POST",
+            url: "ProductController.php?type=store",
+            data: product,
+            dataType: "json",
+            success: function(response) {
+                if(response.status == true){
+                    $('#modalCreate').modal('hide');
+                    $('#formCreate').trigger('reset');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("AJAX Error:", status, error);
+                console.log("Response Text:", xhr.responseText);
+                alert("An error occurred: " + error);
             }
-        },
-        error: function(xhr, status, error) {
-            console.error("AJAX Error:", status, error);
-            console.log("Response Text:", xhr.responseText);
-            alert("An error occurred: " + error);
-        }
-    });
-}
+        });
+    }
 
 </script>
 </html>
