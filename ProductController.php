@@ -67,5 +67,20 @@ switch($type){
         break;
     }
 
+    case  'delete' : {
+        $id = $_POST['id'];
+
+        $sql = "DELETE FROM `products` WHERE `id` = $id ";
+
+        mysqli_query($con,$sql);
+
+        echo json_encode([
+            'status' => true,
+            'message' => 'Delete data successful'
+        ]);
+
+        break;
+    }
+
 }
 

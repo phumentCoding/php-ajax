@@ -110,7 +110,7 @@
                                 </td>
                                 <td>
                                     <button class="btn btn-primary btn-edit btn-sm">Edit</button>
-                                    <button class="btn btn-danger btn-delete btn-sm">Delete</button>
+                                    <button onclick="deleteProduct(${value.id})" class="btn btn-danger btn-delete btn-sm">Delete</button>
                                 </td>
                             </tr>
                         `;
@@ -153,6 +153,27 @@
                 alert("An error occurred: " + error);
             }
         });
+    }
+
+    const deleteProduct = (id) => {
+        
+
+        if(confirm('Do you want to delete this?')){
+            $.ajax({
+                type : 'POST',
+                url  : 'ProductController.php?type=delete',
+                data : {
+                    'id' : id
+                },
+                dataType: "json",
+                success : (response) => {
+                    if(response.status == true){
+                        getAllProduct();
+                    }
+                }
+                
+            });
+        }
     }
 
 </script>
