@@ -24,6 +24,7 @@
                 <tr>
                     <th>#</th>
                     <th>ID</th>
+                    <th>Image</th>
                     <th>Name</th>
                     <th>Price</th>
                     <th>Qty</th>
@@ -41,46 +42,46 @@
 
     <!-- Modal create -->
     <div class="modal fade" id="modalCreate" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-        <div class="modal-header">
-            <h1 class="modal-title fs-5" id="exampleModalLabel">Insert new product</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            <form id="formCreate" method="POST" enctype="multipart/form-data">
-                <div class="mb-3">
-                    <label for="name" class="form-label">Name</label>
-                    <input type="text" class="form-control" name="name" id="name" placeholder="Product Name">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Insert new product</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="mb-3">
-                    <label for="price" class="form-label">Price</label>
-                    <input type="text" class="form-control" name="price" id="price" placeholder="Product Price">
-                </div>
-                <div class="mb-3">
-                    <label for="qty" class="form-label">Quantity</label>
-                    <input type="text" class="form-control" name="qty" id="qty" placeholder="Product Quantity">
-                </div>
-                <div class="mb-3">
-                    <label for="status" class="form-label">Product Status</label>
-                    <select name="status" id="status" class=" form-select">
-                        <option value="1">Active</option>
-                        <option value="0">Inactive</option>
-                    </select>
-                </div>
-                <!-- <div>
-                    <label for="image">Product Image</label>
-                    <input type="file" name="image" id="image" class=" form-control">
-                </div> -->
+                <div class="modal-body">
+                    <form id="formCreate" method="POST" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name</label>
+                            <input type="text" class="form-control" name="name" id="name" placeholder="Product Name">
+                        </div>
+                        <div class="mb-3">
+                            <label for="price" class="form-label">Price</label>
+                            <input type="text" class="form-control" name="price" id="price" placeholder="Product Price">
+                        </div>
+                        <div class="mb-3">
+                            <label for="qty" class="form-label">Quantity</label>
+                            <input type="text" class="form-control" name="qty" id="qty" placeholder="Product Quantity">
+                        </div>
+                        <div class="mb-3">
+                            <label for="status" class="form-label">Product Status</label>
+                            <select name="status" id="status" class=" form-select">
+                                <option value="1">Active</option>
+                                <option value="0">Inactive</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="image">Product Image</label>
+                            <input type="file" name="image" id="image" class=" form-control">
+                        </div>
 
-            </form>
+                    </form>
+                </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" onclick="saveProduct()" class="btn btn-success">Save</button>
+            </div>
+            </div>
         </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" onclick="saveProduct()" class="btn btn-success">Save</button>
-        </div>
-        </div>
-    </div>
     </div>
 
 </body>
@@ -99,9 +100,12 @@
                     let tr = ``;
                     $.each(response.products,(index,value) => {
                         tr += `
-                           <tr>
+                           <tr class="align-middle">
                                 <td>${index + 1}</td>
                                 <td>${value.id}</td>
+                                <td>
+                                   <img width="50" height="60" src="images/${value.image}"/>
+                                </td>
                                 <td>${value.name}</td>
                                 <td>$${value.price}</td>
                                 <td>${value.qty}</td> 
@@ -128,23 +132,19 @@
     const saveProduct = () => {
         let form = $('#formCreate')[0];
         let data = new FormData(form);
-
-        let product = {
-            name  : data.get('name'),
-            price : data.get('price'),
-            qty   : data.get('qty'),
-            status : data.get('status')
-        }
-
         $.ajax({
             type: "POST",
             url: "ProductController.php?type=store",
-            data: product,
+            data: data,
             dataType: "json",
+            processData : false,
+            contentType : false,
             success: function(response) {
                 if(response.status == true){
                     $('#modalCreate').modal('hide');
                     $('#formCreate').trigger('reset');
+
+                    getAllProduct();
                 }
             },
             error: function(xhr, status, error) {

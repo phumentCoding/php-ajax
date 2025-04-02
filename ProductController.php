@@ -11,6 +11,8 @@ $port = 3306;
 
 $con = mysqli_connect($hostname, $username, $password, $database, $port);
 
+
+
 if (!$con) {
     echo json_encode([
         'status' => false,
@@ -44,10 +46,20 @@ switch($type){
         $qty = $_POST['qty'] ?? '';
         $status = $_POST['status'] ?? '';
 
+        $file =  $_FILES['image']['name'];
+        //hello.jpg
+
+        $imageName = time() .'.'. pathinfo($file,PATHINFO_EXTENSION);
+
+        //imageName = 23546435432.jpg
+
+        //move image to folder
+        move_uploaded_file($_FILES['image']['tmp_name'],"images/$imageName");
+
 
         try {
 
-            $sql = "INSERT INTO `products`(`name`, `price`, `qty`,`status`) VALUES ('$name','$price','$qty','$status')";
+            $sql = "INSERT INTO `products`(`name`, `price`, `qty`,`status`,`image`) VALUES ('$name','$price','$qty','$status','$imageName')";
 
             mysqli_query($con,$sql);
 
